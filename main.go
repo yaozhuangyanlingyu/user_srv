@@ -1,17 +1,17 @@
 package main
 
 import (
-	"user/handler"
-	pb "user/proto"
+	"fmt"
+	"user_srv/handler"
+	pb "user_srv/proto/go/user"
 
-	"github.com/micro/micro/v3/service"
-	"github.com/micro/micro/v3/service/logger"
+	"github.com/micro/go-micro/v2"
 )
 
 func main() {
 	// Create service
-	srv := service.New(
-		service.Name("user"),
+	srv := micro.NewService(
+		micro.Name("user"),
 	)
 
 	// Register handler
@@ -19,6 +19,7 @@ func main() {
 
 	// Run service
 	if err := srv.Run(); err != nil {
-		logger.Fatal(err)
+		fmt.Println(err)
+		//logger.Fatal(err)
 	}
 }
