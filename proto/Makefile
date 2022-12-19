@@ -48,5 +48,6 @@ endef
 proto_user:
 	$(call generate_proto_fn_go,user)
 
-
+build:
+	docker build . -t user_srv:latest
 

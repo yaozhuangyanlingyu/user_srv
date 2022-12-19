@@ -1,3 +1,3 @@
 FROM alpine
-ADD user /user
-ENTRYPOINT [ "/user" ]
+ADD user_srv /user_srv
+ENTRYPOINT [ "/user_srv" ]
