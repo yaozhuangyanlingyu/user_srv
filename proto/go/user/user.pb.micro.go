@@ -44,6 +44,8 @@ func NewUserEndpoints() []*api.Endpoint {
 type UserService interface {
 	// 获取用户信息
 	GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...client.CallOption) (*GetUserInfoResponse, error)
+	// 获取商品列表接口
+	GetProductList(ctx context.Context, in *GetProductListRequest, opts ...client.CallOption) (*GetProductListResponse, error)
 }
 
 type userService struct {
@@ -68,16 +70,29 @@ func (c *userService) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, o
 	return out, nil
 }
 
+func (c *userService) GetProductList(ctx context.Context, in *GetProductListRequest, opts ...client.CallOption) (*GetProductListResponse, error) {
+	req := c.c.NewRequest(c.name, "User.GetProductList", in)
+	out := new(GetProductListResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for User service
 
 type UserHandler interface {
 	// 获取用户信息
 	GetUserInfo(context.Context, *GetUserInfoRequest, *GetUserInfoResponse) error
+	// 获取商品列表接口
+	GetProductList(context.Context, *GetProductListRequest, *GetProductListResponse) error
 }
 
 func RegisterUserHandler(s server.Server, hdlr UserHandler, opts ...server.HandlerOption) error {
 	type user interface {
 		GetUserInfo(ctx context.Context, in *GetUserInfoRequest, out *GetUserInfoResponse) error
+		GetProductList(ctx context.Context, in *GetProductListRequest, out *GetProductListResponse) error
 	}
 	type User struct {
 		user
@@ -92,4 +107,8 @@ type userHandler struct {
 
 func (h *userHandler) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, out *GetUserInfoResponse) error {
 	return h.UserHandler.GetUserInfo(ctx, in, out)
+}
+
+func (h *userHandler) GetProductList(ctx context.Context, in *GetProductListRequest, out *GetProductListResponse) error {
+	return h.UserHandler.GetProductList(ctx, in, out)
 }

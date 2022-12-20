@@ -30,6 +30,6 @@ message GetProductListResponse {
 message ProductListRow {
 	int64	id 		= 1; // 商品ID
 	string 	name 	= 2; // 商品名称
-	float64 price   = 3; // 商品价格
+	float   price   = 3; // 商品价格
 	string  pic 	= 4; // 商品图片
 }
