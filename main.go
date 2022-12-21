@@ -6,15 +6,22 @@ import (
 	"user_srv/lib/helper"
 	pb "user_srv/proto/go/user"
 
+	"github.com/gin-gonic/gin"
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/registry"
+	"github.com/micro/go-micro/v2/web"
 	"github.com/micro/go-plugins/registry/consul/v2"
+	limiter "github.com/micro/go-plugins/wrapper/ratelimiter/uber/v2"
 	"github.com/spf13/cast"
 )
 
+const (
+	QPS = 1
+)
+
 func main() {
-	// Create service
-	address := "0.0.0.0:8261"
+	// 服务配置
+	address := "0.0.0.0:8001"
 	consulHost := "192.168.107.151"
 	consulPort := "8500"
 	consulAddr := consulHost + ":" + cast.ToString(consulPort)
@@ -27,13 +34,24 @@ func main() {
 	mysqlConfig := &helper.MysqlConfig{}
 	helper.GetMySQLConsulConfig(config, &mysqlConfig, "mysql")
 
+	// http服务
+	RunHttp(consulAddr)
+
 	// 启动服务
 	srv := micro.NewService(
+		// 服务名
 		micro.Name("user_srv"),
+
+		// 服务地址
 		micro.Address(address),
+
+		// 服务注册consul配置
 		micro.Registry(consul.NewRegistry(func(o *registry.Options) {
 			o.Addrs = []string{consulAddr}
 		})),
+
+		// 限流配置
+		micro.WrapHandler(limiter.NewHandlerWrapper(QPS)),
 	)
 
 	// Register handler
@@ -44,4 +62,43 @@ func main() {
 		fmt.Println(err)
 		//logger.Fatal(err)
 	}
+}
+
+/**
+ * 启动http服务
+ */
+func RunHttp(consulAddr string) {
+	// 原生路由实现http
+	/*
+		go func() {
+			server := web.NewService(
+				web.Name("web-api"),
+				web.Address(":8002"),
+			)
+			server.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+				writer.Write([]byte("hello world"))
+			})
+			server.Run()
+		}()*/
+
+	// gin框架实现http
+	go func() {
+		consulReg := consul.NewRegistry(func(o *registry.Options) {
+			o.Addrs = []string{consulAddr}
+		})
+		ginRouter := gin.Default()
+		ginRouter.Handle("GET", "/user", func(context *gin.Context) {
+			context.String(200, "user api")
+		})
+		server := web.NewService(
+			web.Name("gin-api"),
+			web.Address(":8003"),
+			web.Handler(ginRouter),
+			web.Registry(consulReg),
+		)
+
+		// 注：这里可以使用命令行参数，启动端口，例：go run main.go server_address :8004
+		server.Init()
+		server.Run()
+	}()
 }
