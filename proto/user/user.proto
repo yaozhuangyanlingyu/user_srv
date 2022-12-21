@@ -7,6 +7,9 @@ option go_package = "user";
 service User {
 	// 获取用户信息
 	rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {}
+
+	// 获取商品列表接口
+	rpc GetProductList(GetProductListRequest) returns(GetProductListResponse){}
 }
 
 message GetUserInfoRequest {
@@ -16,4 +19,17 @@ message GetUserInfoRequest {
 message GetUserInfoResponse {
 	int64  user_id 	= 1;
 	string name 	= 2;
+}
+
+message GetProductListRequest {
+	repeated int64 pids = 1;
+}
+message GetProductListResponse {
+	repeated ProductListRow products = 1;
+}
+message ProductListRow {
+	int64	id 		= 1; // 商品ID
+	string 	name 	= 2; // 商品名称
+	float64 price   = 3; // 商品价格
+	string  pic 	= 4; // 商品图片
 }

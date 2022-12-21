@@ -11,6 +11,7 @@ require (
 )
 
 require (
+	github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/gin-gonic/gin v1.8.1
 	github.com/google/uuid v1.1.2 // indirect

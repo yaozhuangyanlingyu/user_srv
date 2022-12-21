@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"user_srv/api_handler"
+	"user_srv/grpc_client"
 	"user_srv/handler"
 	"user_srv/lib/helper"
 	pb "user_srv/proto/go/user"
@@ -57,6 +59,9 @@ func main() {
 	// Register handler
 	pb.RegisterUserHandler(srv.Server(), handler.New())
 
+	// 设置grpc客户端
+	grpc_client.SetClient(srv.Client())
+
 	// Run service
 	if err := srv.Run(); err != nil {
 		fmt.Println(err)
@@ -87,9 +92,7 @@ func RunHttp(consulAddr string) {
 			o.Addrs = []string{consulAddr}
 		})
 		ginRouter := gin.Default()
-		ginRouter.Handle("GET", "/user", func(context *gin.Context) {
-			context.String(200, "user api")
-		})
+		ginRouter.Handle("GET", "/user", api_handler.UserInfo)
 		server := web.NewService(
 			web.Name("gin-api"),
 			web.Address(":8003"),
