@@ -13,6 +13,7 @@ import (
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/web"
 	"github.com/micro/go-plugins/registry/consul/v2"
+	"github.com/micro/go-plugins/wrapper/breaker/hystrix/v2"
 	limiter "github.com/micro/go-plugins/wrapper/ratelimiter/uber/v2"
 	"github.com/spf13/cast"
 )
@@ -54,6 +55,9 @@ func main() {
 
 		// 限流配置
 		micro.WrapHandler(limiter.NewHandlerWrapper(QPS)),
+
+		// 熔断配置
+		micro.WrapClient(hystrix.NewClientWrapper()),
 	)
 
 	// Register handler
@@ -92,7 +96,12 @@ func RunHttp(consulAddr string) {
 			o.Addrs = []string{consulAddr}
 		})
 		ginRouter := gin.Default()
+
+		// 获取用户信息
 		ginRouter.Handle("GET", "/user", api_handler.UserInfo)
+
+		// 获取商品列表数据
+		ginRouter.Handle("GET", "/product/list", api_handler.GetProductList)
 		server := web.NewService(
 			web.Name("gin-api"),
 			web.Address(":8003"),
