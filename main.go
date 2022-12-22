@@ -7,13 +7,13 @@ import (
 	"user_srv/handler"
 	"user_srv/lib/helper"
 	pb "user_srv/proto/go/user"
+	"user_srv/wrappers"
 
 	"github.com/gin-gonic/gin"
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/web"
 	"github.com/micro/go-plugins/registry/consul/v2"
-	"github.com/micro/go-plugins/wrapper/breaker/hystrix/v2"
 	limiter "github.com/micro/go-plugins/wrapper/ratelimiter/uber/v2"
 	"github.com/spf13/cast"
 )
@@ -57,7 +57,7 @@ func main() {
 		micro.WrapHandler(limiter.NewHandlerWrapper(QPS)),
 
 		// 熔断配置
-		micro.WrapClient(hystrix.NewClientWrapper()),
+		micro.WrapClient(wrappers.NewProductWrapper),
 	)
 
 	// Register handler

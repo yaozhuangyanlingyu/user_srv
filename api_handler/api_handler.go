@@ -16,7 +16,7 @@ func UserInfo(c *gin.Context) {
 
 func GetProductList(c *gin.Context) {
 	// 调用服务端，获取数据
-	data, err := service.GetProductList(c)
+	data, err := service.GetProductListWrapper(c)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 50000,
