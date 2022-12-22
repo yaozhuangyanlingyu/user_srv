@@ -26,7 +26,11 @@ func (c *ProductWrapper) Call(ctx context.Context, req client.Request, rsp inter
 
 	// 第一步：配置config
 	configA := hystrix.CommandConfig{
-		Timeout: 1000,
+		MaxConcurrentRequests:  1,    // 并发量超过多少触发
+		Timeout:                1000, // 接口超时时间
+		RequestVolumeThreshold: 2,    // 只要有2个请求过来，开始判断错误情况
+		ErrorPercentThreshold:  50,   // 错误超过50%，开启熔断降级
+		SleepWindow:            3000, // 降级方法，响应时长。超过该时间后，再次探测响应是否恢复正常
 	}
 
 	// 第二步：配置command
