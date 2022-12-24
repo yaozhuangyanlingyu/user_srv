@@ -106,9 +106,14 @@ func RunHttp(consulAddr string) {
 
 		// 获取商品列表数据
 		ginRouter.Handle("GET", "/product/list", api_handler.GetProductList)
+
+		// prometheus接口
+		PrometheusRouter(ginRouter)
+
+		// http配置
 		server := web.NewService(
 			web.Name("gin-api"),
-			web.Address(":8003"),
+			web.Address(":8080"),
 			web.Handler(ginRouter),
 			web.Registry(consulReg),
 		)
