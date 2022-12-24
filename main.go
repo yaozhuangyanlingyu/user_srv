@@ -15,6 +15,7 @@ import (
 	"github.com/micro/go-micro/v2/web"
 	"github.com/micro/go-plugins/registry/consul/v2"
 	limiter "github.com/micro/go-plugins/wrapper/ratelimiter/uber/v2"
+	"github.com/micro/go-plugins/wrapper/select/roundrobin/v2"
 	"github.com/spf13/cast"
 )
 
@@ -58,6 +59,9 @@ func main() {
 
 		// 熔断配置
 		micro.WrapClient(wrappers.NewProductWrapper),
+
+		// 负载均衡-轮巡
+		micro.WrapClient(roundrobin.NewClientWrapper()),
 	)
 
 	// Register handler

@@ -16,10 +16,9 @@ require (
 	github.com/gin-gonic/gin v1.8.1
 	github.com/google/uuid v1.1.2 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
-	github.com/micro/go-micro v1.18.0
 	github.com/micro/go-plugins/config/source/consul/v2 v2.9.1
-	github.com/micro/go-plugins/wrapper/breaker/hystrix/v2 v2.9.1
 	github.com/micro/go-plugins/wrapper/ratelimiter/uber/v2 v2.9.1
+	github.com/micro/go-plugins/wrapper/select/roundrobin/v2 v2.9.1
 	github.com/spf13/cast v1.5.0
 	github.com/stretchr/testify v1.8.0 // indirect
 	go.uber.org/atomic v1.6.0 // indirect
