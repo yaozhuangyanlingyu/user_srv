@@ -93,14 +93,22 @@ func Gauge(c *gin.Context) {
  */
 func Histogram(c *gin.Context) {
 	// URL请求计数
-	purl, _ := url.Parse(c.Request.RequestURI)
-	HttpDurationsHistogram.With(
-		prometheus.Labels{
-			"path": purl.Path,
-		},
-	).Observe(
-		float64(rand.Intn(30)),
-	)
+	//purl, _ := url.Parse(c.Request.RequestURI)
+	for _, url := range []string{
+		"/order/list",
+		"/order/detail",
+		"/order/delete",
+		"/product/list",
+		"/product/detail",
+	} {
+		HttpDurationsHistogram.With(
+			prometheus.Labels{
+				"path": url,
+			},
+		).Observe(
+			float64(rand.Intn(30)),
+		)
+	}
 
 	// 返回数据
 	c.JSON(http.StatusOK, gin.H{
