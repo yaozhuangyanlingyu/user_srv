@@ -53,11 +53,18 @@ func init() {
  */
 func Counter(c *gin.Context) {
 	// URL请求计数
-	purl, _ := url.Parse(c.Request.RequestURI)
-	AccessCounter.With(prometheus.Labels{
-		"method": c.Request.RequestURI,
-		"path":   purl.Path,
-	}).Add(1)
+	for _, url := range []string{
+		"/order/list",
+		"/order/detail",
+		"/order/delete",
+		"/product/list",
+		"/product/detail",
+	} {
+		AccessCounter.With(prometheus.Labels{
+			"method": c.Request.RequestURI,
+			"path":   url,
+		}).Add(1)
+	}
 
 	// 返回数据
 	c.JSON(http.StatusOK, gin.H{
